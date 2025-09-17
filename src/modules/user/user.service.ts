@@ -10,12 +10,30 @@ export class UserService {
     private usersRepository: Repository<UserEntity>,
   ) {}
 
+  async create(data: Partial<UserEntity>): Promise<UserEntity> {
+    const user = this.usersRepository.create(data);
+    return this.usersRepository.save(user);
+  }
+
   findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
   }
 
-  findOneByEmail(email: string): Promise<UserEntity | null> {
-    return this.usersRepository.findOneBy({ email });
+  findOneBy(
+    params: Partial<Pick<UserEntity, 'id' | 'email'>>,
+  ): Promise<UserEntity | null> {
+    return this.usersRepository.findOne({
+      where: params,
+      select: ['id', 'email', 'name', 'role'],
+    });
+  }
+
+  findOneByWithPassword(
+    params: Partial<Pick<UserEntity, 'id' | 'email'>>,
+  ): Promise<UserEntity | null> {
+    return this.usersRepository.findOne({
+      where: params,
+    });
   }
 
   async remove(id: string): Promise<void> {

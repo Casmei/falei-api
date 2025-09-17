@@ -19,4 +19,7 @@ export const env = cleanEnv(process.env, {
   APP_PORT: port({
     default: 3000,
   }),
+  JWT_SECRET: str({
+    default: 'mamia',
+  }),
 });
