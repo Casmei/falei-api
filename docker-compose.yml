@@ -1,0 +1,41 @@
+services:
+  # Serviço para a aplicação NestJS
+  app:
+    container_name: falei-api
+    build:
+      context: .
+      target: ${NODE_ENV}
+    command: pnpm run start:dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  # Serviço para o PostgreSQL
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - ./docker/dbdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - '5432:5432'
+# Redes para a comunicação entre os serviços
+networks:
+  app-network:
+    driver: bridge
+
+# Volumes para persistência dos dados do banco
+volumes:
+  postgres-data:
